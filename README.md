@@ -35,7 +35,7 @@ the goal of this project is parse all data from ffkmda extranet service and exct
 ## Start Backend Project
     - In a terminal, make sure you are inside `ffkmda-back` root folder
     ```
-    mvn spring-boot:run
+    mvn clean install
     mvn spring-boot:run --DskipTests
     ```    
     
