@@ -1,0 +1,53 @@
+#vmap svg{
+    width: 100%;
+    height: 700px !important;
+}
+.section {
+    border-bottom: solid 1px #6ca5c8;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    padding-left: 10px;
+}
+
+.titre-page {
+    font-size: 1.5em;
+}
+
+.box-primary {
+    background-color: #136597;
+}
+
+.titre{
+    color: white;
+}
+
+.border-right-1{
+    border-right: 1px solid #ddd;
+}
+
+.empty-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+  
+    
+  }
+
+  .empty-data-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: #888;
+  }
+
+  .empty-data-message {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;  
+  }
+
+  .content-scroll{
+    overflow-y: scroll;
+    height: 100%;
+  }

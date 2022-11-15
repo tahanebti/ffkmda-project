@@ -1,0 +1,13 @@
+.paginator {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+    cursor: pointer;
+  }
+
+
+  .page-item.active .page-link{
+    color: white !important;
+  }  

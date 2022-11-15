@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: ffkmda-api
+  jpa:
+    hibernate:
+      ddl-auto: create
+      show_sql: true
+      jdbc.batch_size: 10
+      ejb:
+      naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/ffkmda_db?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: taha@123
+     
+
+app:
+  jwt:
+    # Signing key for HS512 algorithm
+    # In http://www.allkeysgenerator.com/ you can generate all kinds of keys
+    secret: v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-JaNdRfUjXn2r5u8x/A?D(G+KbPeShVkYp
+    expiration:
+      minutes: 10
+  cors:
+    allowed-origins: http://localhost:3000, http://localhost:8080, https://extranet.ffkmda.fr
+ 
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+spring.batch.initialize-schema: NEVER
+spring.batch.jdbc.initialize-schema : ALWAYS
+
+spring.batch.job.enabled: false
+rest.api.url: https://extranet.ffkmda.fr/api/v1/structures
+
+
+logging.level.org.hibernate.SQL: DEBUG
+logging.level.org.springframework.cache: TRACE

@@ -1,0 +1,73 @@
+<header class="py-3 mb-3 border-bottom">
+    <div class="container-fluid d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
+      <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-" >
+        <img src="assets/logo.png" alt="ffkmda-logo">
+      </a>
+  
+      <div class="d-flex align-items-center">
+        <form class="w-100 me-3" role="search">
+          
+          <input 
+          class="form-control" 
+          placeholder="Search..." 
+          aria-label="Search"
+          type="text"
+          name="search"
+          id="search"
+          autocomplete="off"
+          (keyup)="autoCompleteSubject.next(searchRef.value)"
+          (keyup.enter)="
+            searched.emit(searchRef.value); suggestionsVisibleSubject.next(false)
+          "
+          (focus)="suggestionsVisibleSubject.next(true)"
+          #searchRef
+          >
+          <ng-container *ngIf="suggestionsContent$ | async as suggestions">
+            <div
+              id="suggestions"
+              class="suggestions"
+              *ngIf="suggestions | suggestionVisible"
+            >
+              <ul class="suggestions__list">
+                <ng-container *ngFor="let group of suggestions | suggestionsGroup">
+                  <li class="suggestions__group" *ngIf="group.value.length > 0">
+                    <header class="px-4 mb-2">
+                      <p class="text-xs text-gray-400 font-semibold">
+                        {{ group.key | uppercase }}
+                      </p>
+                    </header>
+                    <ul class="px-2">
+                      <li
+                        tabindex="0"
+                        class="suggestions__group-item"
+                        *ngFor="let groupItem of group.value"
+                        (click)="suggestionsClicked(group.key, groupItem)"
+                      >
+                        <p>{{ groupItem.name }}</p>
+                      </li>
+                    </ul>
+                  </li>
+                </ng-container>
+              </ul>
+            </div>
+          </ng-container>
+        </form>
+  
+        <!-- <div class="flex-shrink-0 dropdown">
+          <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+          </a>
+          <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="#">New project...</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Sign out</a></li>
+          </ul>
+        </div> -->
+      </div>
+    </div>
+  </header>
+  
+  
+  
