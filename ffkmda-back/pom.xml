@@ -143,31 +143,8 @@
 		    <version>20220924</version>
 		</dependency>
 		
-		
-		       <!-- SpringDoc Cache manager -->
-       <dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-cache</artifactId>
-		</dependency>
-		
-       <!-- SpringDoc Redis -->
-       	<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
-       	
-       	<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-		</dependency> 
-		
-		<!-- SpringDoc Elasticsearch -->
-		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
-
-
+	
+	
         
     </dependencies>
 

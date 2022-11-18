@@ -1,5 +1,6 @@
 package com.tahanebti.ffkmda.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,16 +17,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+   @Autowired
+   private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", username)));
+        User user = userService.validateAndGetUserByUsername(username);
+                
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
 				.map(r -> {
 					return new SimpleGrantedAuthority(r.getAuthority());
