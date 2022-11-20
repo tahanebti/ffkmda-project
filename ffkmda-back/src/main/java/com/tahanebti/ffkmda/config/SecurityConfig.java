@@ -22,8 +22,9 @@ import com.tahanebti.ffkmda.security.JwtAuthenticationFilter;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	 	private final JwtAuthenticationFilter tokenAuthenticationFilter;
+	 	//private final JwtAuthenticationFilter tokenAuthenticationFilter;
 
+	 	
 
 		@Bean
 	    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -56,7 +57,7 @@ public class SecurityConfig {
 	                .antMatchers("https://extranet.ffkmda.fr/**").permitAll()
 	                .antMatchers("/**").permitAll()  // permit all the routers after swagger-ui.html
 	                .anyRequest().authenticated();
-	        http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+	      //  http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 	        http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 	        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	        http.cors().and().csrf().disable();

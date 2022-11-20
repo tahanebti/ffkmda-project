@@ -1,28 +1,17 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-alpine as compile
 
-EXPOSE 9007
+
+# Build the jar using maven 
+#RUN apk add maven
 WORKDIR /app
+#COPY . /app/
+#RUN mvn -f pom.xml clean package -DskipTests
 
-# Copy maven executable to the image
-COPY mvnw .
-COPY .mvn .mvn
+#FROM openjdk:8-jre-alpine
 
-# Copy the pom.xml file
-COPY pom.xml .
+# Copy the packaged jar app file to a smaller JRE base image
+#COPY --from=compile "/target/ffkmda-0.0.1-SNAPSHOT.jar" app.jar
 
-# Copy the project source
-COPY ./src ./src
-COPY ./pom.xml ./pom.xml
 
-RUN chmod 755 /app/mvnw
-
-#RUN ./mvnw dependency:go-offline -B
-
-RUN ./mvnw clean install
-RUN ./mvnw spring-boot:run -DskipTests
-
-RUN ls -al
-ENTRYPOINT ["java","-jar","target/ffkmda-0.0.1-SNAPSHOT.jar"]
-
-HEALTHCHECK --interval=1m --timeout=3s CMD wget -q -T 3 -s http://localhost:9007/actuator/health/ || exit 1
-    
+COPY ./target/ffkmda-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

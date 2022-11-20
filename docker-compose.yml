@@ -3,48 +3,45 @@ version: "3.8"
 # Define services
 services:
 
-  # Database Service (Mysql)
-  mysql-db:
-    image: mysql:latest 
-    container_name: mysql-db
-    ports:
-      - "3307:3306"
+   # Database Service (Mysql)
+  db:
+    image: mysql
+    restart: always
+    env_file:
+      - ".env"
+    container_name: ${MYSQL_HOST}   
     volumes:
-      - ./my-db:/var/lib/mysql
+      - db-data:/var/lib/mysql
       # copy the sql script to create tables
       - ./dump.sql:/dump.sql
     command: --init-file /dump.sql  
-    restart: always
+    ports:
+      - "3307:3306" 
     environment:
-      MYSQL_ROOT_PASSWORD : taha@123
-      MYSQL_USER : root
-      #MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
       - backend
       
 
  # phpmyadmin
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: ffkmda-phpmyadmin 
-    restart: always
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
     ports:
-      # 8080 is the host port and 80 is the docker port
-      - 8080:80
+      - 8080:80 # Map the exposed port 80 on the container to port 8081 on the host machine
     environment:
-      - MYSQL_USERNAME:root
-      - MYSQL_ROOT_PASSWORD:taha@123
+      - PMA_ARBITRARY=0
+      - PMA_HOST=${MYSQL_HOST}
+    restart: always
     networks:
     # define your network where all containers are connected to each other
       - backend
-    links:
-     - mysql-db 
-    volumes:
-    # define directory path where you shall store your persistent data and config 
-    # files of phpmyadmin 
-      - ./docker/phpmyadmin
-
-
+    depends_on:
+     - db 
+    
   # App backend service
   app-server:
     # Configuration for building the docker image for the backend service
@@ -55,16 +52,8 @@ services:
     ports:
       - "9007:9007" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
-    links: 
-      - mysql-db
     depends_on: 
-      - mysql-db # This service depends on mysql. Start that first.
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3307/ffkmda_db?autoReconnect=true&useSSL=false
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: taha@123
-
-      #- DEFAULT_PATH=<Target path in windows>      
+      - db # This service depends on mysql. Start that first.
     networks: # Networks to join (Services on the same network can communicate with each other using their name)
       - backend
       - frontend
@@ -76,8 +65,14 @@ services:
     build:
       context: ffkmda-front # Use an image built from the specified dockerfile in the `ffkmda-front` directory.
       dockerfile: Dockerfile
+      
     ports:
-      - "9001:9001" # Map the exposed port 80 on the container to port 8081 on the host machine
+      - "4200:4200" 
+      - "49153:49153"
+    expose:
+      - "4200" 
+      - "49153"
+ 
     restart: always
     depends_on:
       - app-server
@@ -86,10 +81,9 @@ services:
 
 
 
-
-
 volumes:
-  my-db:
+  db-data:
+    driver: local
 
 # Networks to be created to facilitate communication between containers
 networks:

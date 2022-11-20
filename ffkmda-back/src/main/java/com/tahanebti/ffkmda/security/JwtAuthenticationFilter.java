@@ -24,7 +24,7 @@ import java.util.Optional;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
+   // private final UserDetailsService userDetailsService;
     private final JwtTokenProvider tokenProvider;
 
     @Override
@@ -34,10 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .flatMap(tokenProvider::validateTokenAndGetJws)
                     .ifPresent(jws -> {
                         String username = jws.getBody().getSubject();
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+     //                   UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+       //                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+       //                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        //                SecurityContextHolder.getContext().setAuthentication(authentication);
                     });
         } catch (Exception e) {
             log.error("Cannot set user authentication", e);

@@ -1,6 +1,7 @@
 package com.tahanebti.ffkmda.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,31 +19,35 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
-
-   @Autowired
-   private UserService userService;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        User user = userService.validateAndGetUserByUsername(username);
-                
-        List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-				.map(r -> {
-					return new SimpleGrantedAuthority(r.getAuthority());
-				})
-				.collect(Collectors.toList());   
-        return mapUserToCustomUserDetails(user, authorities);
-    }
-
-    private CustomUserDetails mapUserToCustomUserDetails(User user, List<SimpleGrantedAuthority> authorities) {
-        CustomUserDetails customUserDetails = new CustomUserDetails();
-        customUserDetails.setId(user.getId());
-        customUserDetails.setUsername(user.getUsername());
-        customUserDetails.setPassword(user.getPassword());
-        customUserDetails.setName(user.getName());
-        customUserDetails.setEmail(user.getEmail());
-        customUserDetails.setAuthorities(authorities);
-        return customUserDetails;
-    }
+public class UserDetailsServiceImpl  {
+//
+//   @Autowired
+//   private UserService userService;
+//   
+//   public UserDetailsServiceImpl(@Lazy UserService userService) {    
+//       this.userService = userService;  
+//   }
+//
+//    @Override
+//    public UserDetails loadUserByUsername(String username) {
+//        User user = userService.validateAndGetUserByUsername(username);
+//                
+//        List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+//				.map(r -> {
+//					return new SimpleGrantedAuthority(r.getAuthority());
+//				})
+//				.collect(Collectors.toList());   
+//        return mapUserToCustomUserDetails(user, authorities);
+//    }
+//
+//    private CustomUserDetails mapUserToCustomUserDetails(User user, List<SimpleGrantedAuthority> authorities) {
+//        CustomUserDetails customUserDetails = new CustomUserDetails();
+//        customUserDetails.setId(user.getId());
+//        customUserDetails.setUsername(user.getUsername());
+//        customUserDetails.setPassword(user.getPassword());
+//        customUserDetails.setName(user.getName());
+//        customUserDetails.setEmail(user.getEmail());
+//        customUserDetails.setAuthorities(authorities);
+//        return customUserDetails;
+//    }
 }

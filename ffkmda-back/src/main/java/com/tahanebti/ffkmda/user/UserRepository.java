@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import com.tahanebti.ffkmda.base.BaseRepository;
 
-@Repository
 public interface UserRepository extends BaseRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
