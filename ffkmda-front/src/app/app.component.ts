@@ -1,5 +1,5 @@
 import { isPlatformServer } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, of, share, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { DEFAULT_SEARCH_PAGE, FilterQuery, IPageable, NULL_SEARCH_PAGE, PageableSearch } from './core/models/pageable.model';
@@ -7,6 +7,7 @@ import { AutoCompleteResult, ExtranetService } from './core/service/extranet.ser
 declare var $: any;
 import { groupBy } from 'lodash-es';
 import { PageRequest } from './core/models/page-request.model';
+import { fadeAnimation } from './shared/animations/fade.animation';
 
 const typeMap: Record<string, string> = {
   ClubDepartement: 'departement',
@@ -16,7 +17,9 @@ const typeMap: Record<string, string> = {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [fadeAnimation]
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy  {
   regions: any;

@@ -1,4 +1,4 @@
-<div class="container-fluid p-0 m-0">
+<div class="container-fluid p-0 m-0" [@fadeAnimation]>
   <app-header 
 (menuToggled)="toggle()"
 [suggestions]="$any(suggestions$ | async)"
@@ -27,13 +27,28 @@
             <div class="col-lg-12 p-0 m-0" *ngFor="let club of clubs?.data">
             
                 <div class="card">
-                <h5 class="card-header text-truncate">{{club?.nom}}</h5>
+                <h5 class="card-header text-truncate ">{{club?.nom}}</h5>
                 <div class="card-body">
-                  <h5 class="card-title">type : {{club?.type}} | code: {{club?.code}}</h5>
-                  <p class="card-text text-truncate">A. {{club?.siege?.adresse_complete}}</p>
-                  <p class="card-text">E. {{club?.siege?.mail}}</p>
-                  <p class="card-text">M. {{club?.siege?.mobile}} | T. {{club?.siege?.tel}}</p>
-                  <p class="card-text">W. {{club?.siege?.web}}</p>
+                  <!-- <h5 class="card-title">type : {{club?.type}} | code: {{club?.code}}</h5> -->
+                  <p class="card-text text-truncate font-weight-500 text-uppercase">
+                    <i class="fa fa-map-marker mr-15"></i>
+                    {{club?.siege?.adresse_complete}}
+                  </p>
+                  <p class="card-text">
+                  <i class="fa fa-envelope-o mr-15"></i>
+                    {{club?.siege?.mail}}</p>
+                  <p class="card-text">
+                    <i class="fa fa-phone mr-15"></i>
+                    {{club?.siege?.mobile}} &nbsp;&nbsp; | &nbsp;&nbsp; 
+                    <span *ngIf="club?.siege?.tel">
+                      <i class="fa fa-phone mr-15"></i>
+                    {{club?.siege?.tel}}
+                    </span>
+                  </p>
+                  <p class="card-text" *ngIf="club?.siege?.web">
+                    <i class="fa fa-globe mr-15"></i>
+                    {{club?.siege?.web}}
+                  </p>
                   <a href="#" class="btn btn-primary" *ngIf="club?.siege?.web">Go somewhere</a>
                 </div>
               </div>

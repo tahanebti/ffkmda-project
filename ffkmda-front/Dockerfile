@@ -1,27 +1,28 @@
-#### Stage 1: Build the angular application
-FROM node as build
+# Stage 1: Compile and Build angular codebase
+
+# Use official node image as the base image
+FROM node:latest as build
+
+# Set the working directory
+WORKDIR /usr/local/app
+
+# Add the source code to app
+COPY ./ /usr/local/app/
+
+# Install all the dependencies
+RUN npm install
+
+# Generate the build of the application
+RUN npm run build
 
 
-WORKDIR /app
+# Stage 2: Serve app with nginx server
 
-RUN npm cache clean --force
+# Use official nginx image as the base image
+FROM nginx:latest
 
-#COPY ./package.json .
+# Copy the build output to replace the default nginx contents.
+COPY --from=build /usr/local/app/dist/ffkmda-front /usr/share/nginx/html
 
-#RUN npm install
-#COPY . .
-#RUN npm run build --prod
-
-#RUN npm start
-
-#### Stage 2, use the compiled app, ready for production with Nginx
-#FROM nginx
-
-# Copy the angular build from Stage 1
-#COPY --from=build /app/dist /etc/nginx/html
-
-# Copy our custom nginx config
-#COPY /nginx-custom.conf /etc/nginx/conf.d/default.conf
-
-
-#ENTRYPOINT ["nginx","-g","daemon off;"]
+# Expose port 80
+EXPOSE 80
