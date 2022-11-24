@@ -50,7 +50,7 @@ services:
       context: ffkmda-back # Use an image built from the specified dockerfile in the `ffkmda-back` directory.
       dockerfile: Dockerfile
     ports:
-      - "9007:9007" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - "9008:9007" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
     depends_on: 
       - db # This service depends on mysql. Start that first.
