@@ -3,7 +3,7 @@ FROM openjdk:8-jdk-alpine as compile
 
 # Build the jar using maven 
 #RUN apk add maven
-WORKDIR /app
+#WORKDIR /app
 #COPY . /app/
 #RUN mvn -f pom.xml clean package -DskipTests
 
@@ -13,5 +13,5 @@ WORKDIR /app
 #COPY --from=compile "/target/ffkmda-0.0.1-SNAPSHOT.jar" app.jar
 
 
-COPY ./target/ffkmda-0.0.1-SNAPSHOT.jar app.jar
+ADD ./target/ffkmda-0.0.1-SNAPSHOT.jar ffkmda-0.0.1-SNAPSHOT.jar
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
