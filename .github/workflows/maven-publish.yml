@@ -10,8 +10,6 @@ on:
       - ffkmda-back/**
   pull_request:
     branches: [ master ]
-    paths:
-      - ffkmda-back/**
 
 jobs:
   build:
