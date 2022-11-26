@@ -6,6 +6,9 @@ name: ffkmda-back project build
 on:
   push:
     branches: [ master ]
+    
+    paths:
+      - ffkmda-back/**
   pull_request:
     branches: [ master ]
 
