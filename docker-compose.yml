@@ -79,9 +79,10 @@ services:
 
 volumes:
   db-data:
-    driver: local
+    driver: bridge
 
 # Networks to be created to facilitate communication between containers
 networks:
   backend:
+        driver: bridge
   frontend:      
