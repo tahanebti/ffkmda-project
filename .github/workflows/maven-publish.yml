@@ -24,8 +24,11 @@ jobs:
         distribution: 'adopt'
         cache: maven
     - run: mvn -B package --file pom.xml -DskipTests
-    - run: mkdir app && cp target/ffkmda-0.0.1-SNAPSHOT.jar app
-
+    - run: mkdir staging && cp target/*.jar staging
+    - uses: actions/upload-artifact@v1
+      with:
+          name: Package
+          path: staging
 
     - name: Build & push Docker image
       uses: mr-smithers-excellent/docker-build-push@v5

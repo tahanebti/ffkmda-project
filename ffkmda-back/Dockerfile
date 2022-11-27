@@ -1,22 +1,17 @@
-FROM openjdk:8-jdk-alpine 
-WORKDIR /app
+FROM openjdk:8-jdk-alpine as compile
 
-# Copy maven executable to the image
-COPY mvnw .
-COPY .mvn .mvn
 
-# Copy the pom.xml file
-COPY pom.xml .
+# Build the jar using maven 
+#RUN apk add maven
+#WORKDIR /app
+#COPY . /app/
+#RUN mvn -f pom.xml clean package -DskipTests
 
-# Copy the project source
-COPY ./src ./src
-COPY ./pom.xml ./pom.xml
+#FROM openjdk:8-jre-alpine
 
-RUN chmod 755 /app/mvnw
+# Copy the packaged jar app file to a smaller JRE base image
+#COPY --from=compile "/target/ffkmda-0.0.1-SNAPSHOT.jar" app.jar
 
-RUN ./mvnw dependency:go-offline -B
-
-RUN ./mvnw package 
 
 ADD ./target/ffkmda-0.0.1-SNAPSHOT.jar ffkmda-0.0.1-SNAPSHOT.jar
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/ffkmda-0.0.1-SNAPSHOT.jar"]
