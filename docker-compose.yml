@@ -43,20 +43,21 @@ services:
      - db 
     
   # App backend service
-  # app-server:
-  #   # Configuration for building the docker image for the backend service
-  #   container_name: ffkmda-backend
-  #   build:
-  #     context: ffkmda-back # Use an image built from the specified dockerfile in the `ffkmda-back` directory.
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "9007:9007" # Forward the exposed port 8080 on the container to port 8080 on the host machine
-  #   restart: always
-  #   depends_on: 
-  #     - db # This service depends on mysql. Start that first.
-  #   networks: # Networks to join (Services on the same network can communicate with each other using their name)
-  #     - backend
-  #     - frontend
+  app-server:
+    # Configuration for building the docker image for the backend service
+    image: tahanebti/ffkmda-project
+    container_name: ffkmda-backend
+   # build:
+   #   context: ffkmda-back # Use an image built from the specified dockerfile in the `ffkmda-back` directory.
+   #   dockerfile: Dockerfile
+    ports:
+      - "9007:9007" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    restart: always
+   # depends_on: 
+   #   - db # This service depends on mysql. Start that first.
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - backend
+      - frontend
 
 
   # Frontend Service 
@@ -67,8 +68,9 @@ services:
       dockerfile: Dockerfile
     restart: always  
     ports:
-      - 4200:80
-
+      - 4200:80 
+    depends_on:
+      - app-server
     networks:
       - frontend
 
