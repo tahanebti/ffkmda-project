@@ -16,9 +16,9 @@ spring:
       naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
       
   datasource:
-    url: jdbc:mysql://mysql-db:3306/ffkmda_db?autoReconnect=true&failOverReadOnly=false&maxReconnects=10
+    url: jdbc:mysql://localhost:3307/ffkmda_db?autoReconnect=true&failOverReadOnly=false&maxReconnects=10
     username: root
-    password: 
+    password: taha@123
      
 
 app:
