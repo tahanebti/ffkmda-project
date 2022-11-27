@@ -37,7 +37,7 @@ export class ExtranetService {
       size: page.pageable?.pageSize
     }
 
-    return this._http.get<Page<any>>(`http://localhost:9007/api/v1/clubs/address?commune=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?commune=${query}`, { params: params })
   }
 
   searchByCodePostal(query?: any, page?: PageableSearch): Observable<Page<any>> {
@@ -48,7 +48,7 @@ export class ExtranetService {
     }
 
 
-    return this._http.get<Page<any>>(`http://localhost:9007/api/v1/clubs/address?code_postal_fr=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?code_postal_fr=${query}`, { params: params })
   }
 
 
@@ -59,7 +59,7 @@ export class ExtranetService {
       size: page.pageable?.pageSize
     }
 
-    return this._http.get<Page<any>>(`http://localhost:9007/api/v1/clubs/address?code_insee_departement=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?code_insee_departement=${query}`, { params: params })
   }
 
   getAutoComplete(query?: any): Observable<any> {
@@ -78,7 +78,7 @@ export class ExtranetService {
   }
 
 
-  //http://localhost:9007/api/v1/clubs/address?code_insee_departement
+  //http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?code_insee_departement
 
 
 
