@@ -3,58 +3,57 @@ version: "3.8"
 # Define services
 services:
 
-   # Database Service (Mysql)
-  db:
-    image: mysql
-    restart: on-failure
-    env_file:
-      - ".env"
-    container_name: ${MYSQL_HOST}   
-    volumes:
-      - db-data:/var/lib/mysql
-      # copy the sql script to create tables
-      - ./dump.sql:/dump.sql
-    command: --init-file /dump.sql  
-    ports:
-      - "3307:3306" 
-    environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    networks:
-      - backend
+#    # Database Service (Mysql)
+#   db:
+#     image: mysql
+#     restart: on-failure
+#     env_file:
+#       - ".env"
+#     container_name: ${MYSQL_HOST}   
+#     volumes:
+#       - db-data:/var/lib/mysql
+#       # copy the sql script to create tables
+#       - ./dump.sql:/dump.sql
+#     command: --init-file /dump.sql  
+#     ports:
+#       - "3307:3306" 
+#     environment:
+#       - MYSQL_DATABASE=${MYSQL_DATABASE}
+#       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+#       - MYSQL_USER=${MYSQL_USER}
+#       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+#     networks:
+#       - backend
       
 
- # phpmyadmin
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    ports:
-      - 8080:80 # Map the exposed port 80 on the container to port 8081 on the host machine
-    environment:
-      - PMA_ARBITRARY=0
-      - PMA_HOST=${MYSQL_HOST}
-    restart: always
-    networks:
-    # define your network where all containers are connected to each other
-      - backend
-    depends_on:
-     - db 
+#  # phpmyadmin
+#   phpmyadmin:
+#     image: phpmyadmin/phpmyadmin
+#     container_name: phpmyadmin
+#     ports:
+#       - 8080:80 # Map the exposed port 80 on the container to port 8081 on the host machine
+#     environment:
+#       - PMA_ARBITRARY=0
+#       - PMA_HOST=${MYSQL_HOST}
+#     restart: always
+#     networks:
+#     # define your network where all containers are connected to each other
+#       - backend
+#     depends_on:
+#      - db 
     
   # App backend service
   app-server:
     # Configuration for building the docker image for the backend service
-    image: tahanebti/ffkmda-project
     container_name: ffkmda-backend
-   # build:
-   #   context: ffkmda-back # Use an image built from the specified dockerfile in the `ffkmda-back` directory.
-   #   dockerfile: Dockerfile
+    build:
+      context: ffkmda-back # Use an image built from the specified dockerfile in the `ffkmda-back` directory.
+      dockerfile: Dockerfile
     ports:
       - "9007:9007" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
-   # depends_on: 
-   #   - db # This service depends on mysql. Start that first.
+    #depends_on: 
+    #  - db # This service depends on mysql. Start that first.
     networks: # Networks to join (Services on the same network can communicate with each other using their name)
       - backend
       - frontend
@@ -74,11 +73,6 @@ services:
     networks:
       - frontend
 
-
-
-volumes:
-  db-data:
-    driver: local
 
 # Networks to be created to facilitate communication between containers
 networks:

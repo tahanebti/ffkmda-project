@@ -1,17 +1,11 @@
-FROM openjdk:8-jdk-alpine as compile
+#Maven Build
+FROM maven:3.8.3-openjdk-8-slim AS builder
+COPY pom.xml /app/
+COPY src /app/src
+RUN --mount=type=cache,target=/root/.m2 mvn -f /app/pom.xml clean package -DskipTests
 
-
-# Build the jar using maven 
-#RUN apk add maven
-#WORKDIR /app
-#COPY . /app/
-#RUN mvn -f pom.xml clean package -DskipTests
-
-#FROM openjdk:8-jre-alpine
-
-# Copy the packaged jar app file to a smaller JRE base image
-#COPY --from=compile "/target/ffkmda-0.0.1-SNAPSHOT.jar" app.jar
-
-
-ADD ./target/ffkmda-0.0.1-SNAPSHOT.jar ffkmda-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/ffkmda-0.0.1-SNAPSHOT.jar"]
+#Run
+FROM openjdk:8-jre-slim
+COPY --from=builder /app/target/ffkmda-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 9007
+ENTRYPOINT ["java", "-jar", "app.jar"]
