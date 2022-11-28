@@ -45,10 +45,11 @@ services:
   # App backend service
   app-server:
     # Configuration for building the docker image for the backend service
+    image: tahanebti/ffkmda-project:latest
     container_name: ffkmda-backend
-    build:
-      context: ffkmda-back # Use an image built from the specified dockerfile in the `ffkmda-back` directory.
-      dockerfile: Dockerfile
+    #build:
+    #  context: ffkmda-back # Use an image built from the specified dockerfile in the `ffkmda-back` directory.
+    #  dockerfile: Dockerfile
     ports:
       - "9007:9007" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always

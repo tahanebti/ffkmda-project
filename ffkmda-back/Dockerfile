@@ -13,5 +13,5 @@ WORKDIR /app
 #COPY --from=compile "/target/ffkmda-0.0.1-SNAPSHOT.jar" app.jar
 
 
-COPY ./target/ffkmda-0.0.1-SNAPSHOT.jar app.jar
+ADD ./target/ffkmda-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
