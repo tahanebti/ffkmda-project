@@ -102,3 +102,17 @@ $nav-panel-active: darken(#38495f, 2%);
   .welcome-text {
     font-size: smaller;
   }
+
+  @media (max-width:600px)  {
+    .center{
+      height: 78px;
+      width: 150px;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-82%, -40%);
+      padding: 20px;
+    }  
+   }
+
+  

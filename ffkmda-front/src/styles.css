@@ -69,3 +69,7 @@ p {
     margin-bottom: 0.25rem;
 }
 
+.jqvmap-zoomin, .jqvmap-zoomout {
+    
+  display: none !important;
+}

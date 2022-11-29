@@ -17,6 +17,7 @@ export const components = [
   export const pipes = [
    SuggestionsHelperModule
   ]
+  
 
 @NgModule({
     declarations: [

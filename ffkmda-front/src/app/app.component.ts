@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy  {
   clubs: any
   targetCode: any;
   filter: any
+  p = 1
   private readonly DEFAULT_PAGE: IPageable = DEFAULT_SEARCH_PAGE || NULL_SEARCH_PAGE;
 
   private _subscriptionSubject: Subject<void>;

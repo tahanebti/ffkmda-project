@@ -61,9 +61,7 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 	public Page<Club> searchByAddress(String commune, String code_postal_fr, String nom_voie, String type_voie,
 			String code_insee_departement, Integer _limit, Integer _offset, String _sort) {
 		
-		
-
-		
+			
 		PageRequest page = PageRequestBuilder.getPageRequest( _limit, _offset, _sort);
 		
 		return clubRepository.findAll(adSpecial(code_postal_fr, commune, nom_voie, type_voie, code_insee_departement), page);

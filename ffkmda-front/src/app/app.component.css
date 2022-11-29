@@ -67,3 +67,29 @@
   .text-uppercase{
     text-transform: uppercase;
   }
+
+
+
+
+
+  .size{
+    width: auto;
+    height: 400px;
+  }
+  
+  .jqvmap-label
+  {
+      border-color: #CCCCCC;
+    position: absolute;
+    display: none;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #292929;
+    color: white;
+    font-family: sans-serif, Verdana;
+    font-size: smaller;
+    padding: 3px;
+  }
+
+  

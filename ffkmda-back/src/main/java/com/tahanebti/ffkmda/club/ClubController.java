@@ -128,13 +128,16 @@ public class ClubController {
 		List<Club> clubs = clubService.findClubsBySiegeAddress(commune, code_postal_fr, nom_voie, type_voie, code_insee_departement);
 		
 	    
-		Integer  size = clubs.size() < 1 ? 1 : pageable.getPageSize();
+		//Integer  size = clubs.size() < 1 ? 1 : pageable.getPageSize();
 	
+		int pageSize = pageable.getPageSize();
+		long pageOffset = pageable.getOffset();
+		long total = pageOffset + clubs.size() + (clubs.size() == pageSize ? pageSize : 0);
 		
-		List<Club> userSubList = clubs.subList((pageable.getPageNumber()-1)*size, (pageable.getPageNumber()*size)-1);
+		//List<Club> userSubList = clubs.subList((pageable.getPageNumber()-1)*size, (pageable.getPageNumber()*size)-1);
 
 			
-		final Page<Club> pageEntity = new PageImpl<>(userSubList, pageable, clubs.size());
+		final Page<Club> pageEntity = new PageImpl<>(clubs, pageable, total);
 	
 		Map<String, Object> response = new HashMap<>();
 		response.put("data", pageEntity.getContent().stream().map(clubMapper::toResponse).collect(Collectors.toList()));			
