@@ -143,7 +143,7 @@ public class RESTClubReader implements ItemReader<Club> {
 	 			        	 			.mail(listSiege.get("mail") == null ? null : listSiege.get("mail").toString())		 			        	 					 			        	 			
 	 			        	 			.facebook(listSiege.get("facebook") == null ? null : listSiege.get("facebook").toString())
 	 			        	 			.twitter(listSiege.get("twitter") == null ? null : listSiege.get("twitter").toString())
-	 			        	 			
+	 			        	 			.web(listSiege.get("web") == null ? null : listSiege.get("web").toString())
 	 		        	 				.build())
 	        				 .build();
 	        	 

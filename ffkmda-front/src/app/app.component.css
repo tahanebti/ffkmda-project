@@ -93,3 +93,11 @@
   }
 
   
+  .text-elepsis{
+    display: -webkit-box;
+    max-width: 90%;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+ }

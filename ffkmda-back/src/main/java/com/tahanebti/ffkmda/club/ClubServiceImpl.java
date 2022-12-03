@@ -95,7 +95,7 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
              }
              
 	    	 if(code_insee_departement != null && code_insee_departement instanceof String){
-                 return criteriaBuilder.like(criteriaBuilder.lower(root.join("siege", JoinType.LEFT).get("code_insee_departement")), "%" + code_insee_departement + "%");
+                 return criteriaBuilder.like(criteriaBuilder.lower(root.join("siege", JoinType.LEFT).get("code_insee_departement")), code_insee_departement + "%");
              }
 	    	 
              
