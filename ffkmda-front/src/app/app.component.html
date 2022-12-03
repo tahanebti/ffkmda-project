@@ -46,12 +46,32 @@
                       <i class="fa fa-phone mr-15"></i>
                     {{club?.siege?.tel}}
                     </span>
+
+                    <span *ngIf="club?.siege?.mobile">
+                      | &nbsp;&nbsp;
+                      <i class="fa fa-mobile mr-15"></i>
+                    {{club?.siege?.mobile}}
+                    </span>
+
+                    <span *ngIf="club?.siege?.mobile2">
+                      | &nbsp;&nbsp;
+                      <i class="fa fa-mobile mr-15"></i>
+                    {{club?.siege?.mobile2}}
+                    </span>
+
                   </p>
-                  <p class="card-text">
+                  <p class="card-text" *ngIf="club?.siege?.web">
                     <i class="fa fa-globe mr-15"></i>
                     {{club?.siege?.web}}
+                    <a href="#" class="btn btn-primary" *ngIf="club?.siege?.web">Go somewhere</a>
                   </p>
-                  <a href="#" class="btn btn-primary" *ngIf="club?.siege?.web">Go somewhere</a>
+
+                  <p class="card-text" *ngIf="club?.siege?.facebook">
+                    <i class="fa fa-facebook mr-15"></i>
+                    {{club?.siege?.facebook}}
+                    <a href="#" class="btn btn-primary" *ngIf="club?.siege?.web">Go somewhere</a>
+                  </p>
+                  
                 </div>
               </div>
             </div>
