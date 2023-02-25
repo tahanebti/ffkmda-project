@@ -196,7 +196,7 @@ public class ExtranetService {
 		    headers.add("Authorization", "Bearer "+ token );
 
 		    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-		    String accessUrl = "https://extranet.ffkmda.fr/api/v1/structure/{code}";
+		    String accessUrl = "https://extranet.ffkmda.fr/api/v1/structure/{code}?include=instances,disciplines,derniere_affiliation";
 		    
 	 		
 		    ResponseEntity<Object> responseEntity = restTemplate.exchange(accessUrl, 
@@ -210,4 +210,119 @@ public class ExtranetService {
 	    
 		    return jsonMap;
 	    }
+	    
+	    
+	    public String getAccessWithAPERRIN() throws IOException {
+	          HttpHeaders headers = new HttpHeaders();
+	            headers.add("Accept", "application/json");
+	            
+	            String accessUrl = "https://extranet.ffkmda.fr/auth/login";
+
+	            
+	            URL url = new URL("https://extranet.ffkmda.fr/");
+
+	            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+	            http.setRequestProperty("Cookies", "XSRF-TOKEN=eyJpdiI6IjJzN3Nid0JtK0hPMDdoMU1Tb1c2WUE9PSIsInZhbHVlIjoiQ0gzZWVuVlZYRFwvNVBjd1ZWV1c0cTR4OTZwTDZodisrREVSV0JLQWQ2NExvQktUdGZ5cVRJQkhZSU1TSGZIOHdZK1lQWDBNdk9Yek4xR3ZTcnVwaFNsZUNUWFkrRDlBSWVMU0FnWGZlM2dXNysxS0VlZ1NMcWcwbURhMlNxdDFTIiwibWFjIjoiNDhmY2MzYjM5NTVkNWMyMDUyZWJiZDk5OGZmMGJkMDhjYmU0MmRjOTZjYzVjYzdlNjQ2Y2Q1Y2ZhOTQ4MTI0NiJ9" );
+	            System.out.println(http.getResponseCode() + " " + http.getResponseMessage());
+	            if(http.getResponseCode() == 200) {
+	                
+	                Map<String, String> params = new HashMap<String, String>();
+	                params.put("username", "APERRIN");
+	                params.put("password", "Myonlyone190321");
+	                
+	                HttpEntity<Map<String, String>> request = new HttpEntity<>(params, headers);
+	                String response = this.restTemplate.postForObject(accessUrl, request, String.class);
+	                try {
+	                    return new ObjectMapper().readTree(response).asText();
+	                } catch (JsonProcessingException e) {
+	                    throw new RuntimeException("Error parsing response while requesting token from ffkmda");
+	                }
+	            
+	            }
+                return null;
+	            
+	        
+	        }
+	    
+	    
+	    @Timed
+        public Map fetchPersonCode(Integer _limit, Integer _offset, String _sort, String direction) throws IOException{
+	        String token = getAccessTokenFromExtranetFfkmda();
+            System.out.println("token" + token);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            headers.add("Authorization", "Bearer "+ token );
+
+            HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+            String accessUrl = "https://extranet.ffkmda.fr/api/v1/personnes/recherche";
+            
+
+            URL url = new URL("https://extranet.ffkmda.fr/api/v1/personnes");
+            HttpURLConnection http = (HttpURLConnection)url.openConnection();
+            http.setRequestProperty("Authorization", "Bearer" + token);
+            System.out.println(http.getResponseCode() + " " + http.getResponseMessage());
+            if(http.getResponseCode() == 200) {
+                
+            
+
+                  
+                                
+                 ResponseEntity<Object> responseEntity = restTemplate.exchange(accessUrl, HttpMethod.GET, httpEntity, Object.class);
+                
+                 ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(responseEntity.getBody());
+                Map jsonMap = mapper.readValue(json, Map.class);
+                
+                List list = (List)jsonMap.get("data");
+                
+             
+                
+//              JsonParser jsonParser = mapper.getFactory().createParser(json);
+//              Long dataCount = 0L;
+//              List<Object> list2 = new ArrayList<Object>();
+//              if(jsonParser.nextToken() == JsonToken.START_OBJECT) {
+//                  if(jsonParser.nextFieldName() == "data") {
+//                      if(jsonParser.nextToken() == JsonToken.START_ARRAY) {
+//                          while(jsonParser.nextToken() != JsonToken.END_ARRAY) {
+//                              Object data = jsonParser.readValueAs(Object.class);
+//                             // String nom =  ((JSONObject) data).get("nom").toString();
+//                             // System.out.println(" ------------> nom" + nom);
+//                              list2.add(data);
+//                              dataCount++;
+//                          }
+//                      }
+//                  }
+//              }
+        
+                
+
+             //   clubRepository.saveAll(target);
+                 PageRequest page = PageRequestBuilder.getPageRequest( _limit, _offset, _sort);
+
+                
+                int start =  (int) page.getOffset();
+                int end = Math.min((start + page.getPageSize()), list.size());
+
+                
+                final Page<Object> pageEntity = new PageImpl<>(list.subList(start, end), page, list.size());
+                
+                Map<String, Object> response = new HashMap<>();
+
+                response.put("data", pageEntity.getContent());
+                response.put("totalElements", pageEntity.getTotalElements());
+                response.put("last", pageEntity.isLast());
+                response.put("first", pageEntity.isFirst());
+                response.put("numberOfElements", pageEntity.getNumberOfElements());
+                response.put("empty", pageEntity.isEmpty());
+                
+             //   System.out.println(" ------------> " + target);
+                return response;
+            }
+            
+          
+           
+            return null;
+	    }
+	    
+	    
 }

@@ -1,7 +1,9 @@
 package com.tahanebti.ffkmda.club;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.criteria.Expression;
@@ -52,20 +54,64 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 	
 	
 	@Override
-	public List<Club> findClubsBySiegeAddress(String code_postal_fr, String commune, String nom_voie, String type_voie, String code_insee_departement) {
-		return clubRepository.findAll(adSpecial(code_postal_fr, commune, nom_voie, type_voie, code_insee_departement));	
+	public List<Club> findClubsBySiegeAddress(String code_postal_fr, String commune, String nom_voie, String type_voie, String code_insee_departement,
+	        String sortBy, String sortDirection
+	        ) {
+	    
+	    Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+	    Specification<Club> spec = adSpecial(code_postal_fr, commune, nom_voie, type_voie, code_insee_departement);
+	    return clubRepository.findAll(spec, sort);
 	}
 	
 
 	@Override
 	public Page<Club> searchByAddress(String commune, String code_postal_fr, String nom_voie, String type_voie,
-			String code_insee_departement, Integer _limit, Integer _offset, String _sort) {
+			String code_insee_departement, String sortBy, String sortDirection, Pageable page) {
 		
 			
-		PageRequest page = PageRequestBuilder.getPageRequest( _limit, _offset, _sort);
-		
+	
 		return clubRepository.findAll(adSpecial(code_postal_fr, commune, nom_voie, type_voie, code_insee_departement), page);
 	}
+	
+	
+	
+	
+	public Page<Club> searchClubs(
+	        String city,
+	        String commune,
+	        String code_postal_fr,
+	        String nom_voie,
+	        String type_voie,
+	        String code_insee_departement,
+	        int page,
+	        int size,
+	        String sortBy,
+	        String sortDirection
+	) {
+	    Map<String, String> criteria = new HashMap<>();
+	    if (city != null && !city.isEmpty()) {
+	        criteria.put("city", city);
+	    }
+	    if (commune != null && !commune.isEmpty()) {
+	        criteria.put("commune", commune);
+	    }
+	    if (code_postal_fr != null && !code_postal_fr.isEmpty()) {
+	        criteria.put("code_postal_fr", code_postal_fr);
+	    }
+	    if (nom_voie != null && !nom_voie.isEmpty()) {
+	        criteria.put("nom_voie", nom_voie);
+	    }
+	    if (type_voie != null && !type_voie.isEmpty()) {
+	        criteria.put("type_voie", type_voie);
+	    }
+	    if (code_insee_departement != null && !code_insee_departement.isEmpty()) {
+	        criteria.put("code_insee_departement", code_insee_departement);
+	    }
+	    Specification<Club> spec = new ClubSpecifications(criteria);
+	    Pageable paging = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+	    return clubRepository.findAll(spec, paging);
+	}
+
 
 	
 	//	// firstName=:eq:taha&address.state=:cn:kairouan

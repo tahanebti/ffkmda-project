@@ -71,5 +71,20 @@ public class ExtranetController {
 	   public ResponseEntity<?> getStructurs(@PathVariable String code) throws IOException{
 		   return ResponseEntity.ok(extranetService.fetchStructureCode(code));
 	   }
+	   
+	   @GetMapping(value = "/personnes")
+       public ResponseEntity<?> getPersonnes(
+               @RequestParam(required = false, defaultValue = "1") Integer _offset,
+               @RequestParam(required = false, defaultValue = "10") Integer _limit,
+               @RequestParam(required = false, defaultValue = "id") String _sort,
+               @RequestParam(required = false, defaultValue = "asc") String direction
+               ) throws IOException{
+           return ResponseEntity.ok(extranetService.fetchPersonCode(_limit, _offset, _sort, direction));
+       }
+	   
+	   @GetMapping(value ="/apperin")
+       public ResponseEntity<?> getAPERRIN() throws ClientProtocolException, IOException {
+           return ResponseEntity.ok(extranetService.getAccessWithAPERRIN());
+       }
 
 }

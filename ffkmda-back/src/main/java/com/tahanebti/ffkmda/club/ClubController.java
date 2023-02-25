@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +60,7 @@ public class ClubController {
 	}
 
 	
-	@GetMapping("/search")
+	@GetMapping("/search2")
 	public Map<String, Object> search(
 			@Parameter(description = "native query search {} -- Example : code=:eq:ffkmda&siege.commune=:cn:bagnolet") @RequestParam(required = false) String query,
 			@RequestParam(required = false, defaultValue = "1") Integer _offset,
@@ -123,21 +124,22 @@ public class ClubController {
 			@Parameter(description = "return list of clubs by street name {} --- Example : Malmaison ....") @RequestParam(required = false) String nom_voie,
 			@Parameter(description = "return list of clubs by street type {} --- Example : Rue ....") @RequestParam(required = false) String type_voie,
 			@Parameter(description = "return list of clubs by code deparement {} --- Example : 75 ....") @RequestParam(required = false) String code_insee_departement,
-			@PageableDefault(page = 0, size = 10) Pageable pageable
+			@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nom") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
 			) {
-		List<Club> clubs = clubService.findClubsBySiegeAddress(commune, code_postal_fr, nom_voie, type_voie, code_insee_departement);
+		List<Club> clubs = clubService.findClubsBySiegeAddress(commune, code_postal_fr, nom_voie, type_voie, code_insee_departement, sortBy, sortDirection);
 		
-	    
-		//Integer  size = clubs.size() < 1 ? 1 : pageable.getPageSize();
-	
-		int pageSize = pageable.getPageSize();
-		long pageOffset = pageable.getOffset();
+	   
+	    Pageable paging = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+
+		int pageSize = paging.getPageSize();
+		long pageOffset = paging.getOffset();
 		long total = pageOffset + clubs.size() + (clubs.size() == pageSize ? pageSize : 0);
 		
-		//List<Club> userSubList = clubs.subList((pageable.getPageNumber()-1)*size, (pageable.getPageNumber()*size)-1);
-
 			
-		final Page<Club> pageEntity = new PageImpl<>(clubs, pageable, total);
+		final Page<Club> pageEntity = new PageImpl<>(clubs, paging, total);
 	
 		Map<String, Object> response = new HashMap<>();
 		response.put("data", pageEntity.getContent().stream().map(clubMapper::toResponse).collect(Collectors.toList()));			
@@ -154,6 +156,52 @@ public class ClubController {
 	}
 	
 	
+	
+	@GetMapping("/search")
+	public Map<String, Object> searchClubs(
+	        @RequestParam(required = false) String city,
+	        @RequestParam(required = false) String commune,
+	        @RequestParam(required = false) String code_postal_fr,
+	        @RequestParam(required = false) String nom_voie,
+	        @RequestParam(required = false) String type_voie,
+	        @RequestParam(required = false) String code_insee_departement,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size,
+	        @RequestParam(defaultValue = "name") String sortBy,
+	        @RequestParam(defaultValue = "asc") String sortDirection
+	) {
+	    
+	        Page<Club> clubs = clubService.searchClubs(
+	                city,
+	                commune,
+	                code_postal_fr,
+	                nom_voie,
+	                type_voie,
+	                code_insee_departement,
+	                page,
+	                size,
+	                sortBy,
+	                sortDirection
+	        );
+
+
+	    
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("data", clubs.getContent().stream().map(clubMapper::toResponse).collect(Collectors.toList()));            
+	        response.put("offset", clubs.getPageable().getOffset());
+	        response.put("current", clubs.getPageable());
+	        response.put("next", clubs.getPageable().next());
+	        response.put("previous", clubs.getPageable().previousOrFirst());
+	        response.put("totalElements", clubs.getTotalElements());
+	        response.put("last", clubs.isLast());
+	        response.put("first", clubs.isFirst());
+	        response.put("numberOfElements", clubs.getNumberOfElements());
+	        response.put("empty", clubs.isEmpty());
+	     
+	        return response;
+	   
+	
+	}
 	
 	@GetMapping("/phone")
 	public List<ClubResponse> findClubsBySiegePhone(

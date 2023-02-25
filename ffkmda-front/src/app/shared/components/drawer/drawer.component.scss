@@ -1,0 +1,56 @@
+
+.overlay-side-panel {
+
+    
+    .side-panel {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 450px;
+      background: #FFF;
+      overflow-y: auto;
+      z-index: 2001;
+      display: flex;
+      flex-direction: column; 
+  
+      .close {
+        line-height: 1rem;
+        font-size: 1rem;
+        text-align: right;
+        
+        span {
+          cursor: pointer;
+        }
+      }
+    }
+  
+    .side-panel-right {
+      right: 0;
+      margin-right: 0;
+      transition: margin-right 0.3s;
+    }
+  
+    .side-panel-left {
+      left: 0;
+      margin-left: 0;
+      transition: margin-left 0.3s; 
+    }
+  
+    &.collapsed {
+      .side-panel-right {
+        margin-right: -450px;
+      }
+  
+      .side-panel-left {
+        margin-left: -450px;
+      }
+    }
+  }
+  
+  @media screen and (max-width: 450px) {
+    .overlay-side-panel {
+      .side-panel {
+        width: 100%;
+      }
+    }
+  }

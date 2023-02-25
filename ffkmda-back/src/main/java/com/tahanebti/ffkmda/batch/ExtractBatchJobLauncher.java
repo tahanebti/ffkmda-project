@@ -11,6 +11,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class ExtractBatchJobLauncher {
         this.jobLauncher = jobLauncher;
     }
 
-   // @Scheduled(cron = "0/10 * * * * *")
+    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
     public void runSpringBatchExampleJob() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
         LOGGER.info("Extract Batch job was started");
 

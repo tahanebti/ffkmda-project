@@ -17,10 +17,26 @@ public interface ClubService extends BaseService<Club, Long>{
 
 	public List<Club> validateAndGetByType(String type);
 
-	public List<Club> findClubsBySiegeAddress(String commune, String code_postal_fr, String nom_voie, String type_voie, String code_insee_departement);
+	public List<Club> findClubsBySiegeAddress(String commune, String code_postal_fr, String nom_voie, String type_voie, String code_insee_departement,
+	        String sortBy, String sortDirection
+	        );
 
 	public List<Club> findClubsBySiegePhone(String tel, String mobile, String fax);
 
 	public Page<Club> searchByAddress(String commune, String code_postal_fr, String nom_voie, String type_voie,
-			String code_insee_departement, Integer _limit, Integer _offset, String _sort);
+			String code_insee_departement,String sortBy, String sortDirection, Pageable page);
+
+
+    public Page<Club> searchClubs(
+            String city,
+            String commune,
+            String code_postal_fr,
+            String nom_voie,
+            String type_voie,
+            String code_insee_departement,
+            int page,
+            int size,
+            String sortBy,
+            String sortDirection
+    );
 }

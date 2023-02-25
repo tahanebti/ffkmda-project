@@ -18,8 +18,19 @@ public interface ClubRepository extends BaseRepository<Club, Long>{
 
 	List<Club> findByType(String type);
 	
-	@Query(value = "select * from clubs c inner join sieges s where s.code_postal_fr = :zip and s.commune = :commune" , nativeQuery = true)
-    List<Club> findClubsBySiegeAddress(@Param("zip") String zip, @Param("commune") String commune);
+	@Query(value = "SELECT * FROM clubs c INNER JOIN sieges s ON c.siege_id = s.id " +
+            "WHERE s.code_postal_fr = :zip AND s.commune = :commune " +
+            "ORDER BY :sortBy :sortDirection",
+    countQuery = "SELECT count(*) FROM clubs c INNER JOIN sieges s ON c.siege_id = s.id " +
+                 "WHERE s.code_postal_fr = :zip AND s.commune = :commune",
+    nativeQuery = true)
+List<Club> findClubsBySiegeAddress(@Param("zip") String zip,
+                                @Param("commune") String commune,
+                                @Param("sortBy") String sortBy,
+                                @Param("sortDirection") String sortDirection,
+                                Pageable pageable);
+
+
 	
 	
 

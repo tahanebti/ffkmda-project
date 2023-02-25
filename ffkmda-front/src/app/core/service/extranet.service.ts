@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, map, Observable } from 'rxjs';
+import { forkJoin, map, Observable, shareReplay } from 'rxjs';
 import { FilterQuery, IPageable, Page, PageableSearch } from '../models/pageable.model';
 import { isEmpty } from 'lodash';
 
@@ -34,21 +34,25 @@ export class ExtranetService {
 
     const params: {} = !page ? {} : {
       page: page.pageable?.pageNumber,
-      size: page.pageable?.pageSize
+      size: page.pageable?.pageSize,
+      sortBy: "nom",
+      sortDirection: "asc"
     }
     //prod-club.ffkmda.fr
-    return this._http.get<Page<any>>(`http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?commune=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://localhost:9008/api/v1/clubs/address?commune=${query}`, { params: params })
   }
 
   searchByCodePostal(query?: any, page?: PageableSearch): Observable<Page<any>> {
 
     const params: {} = !page ? {} : {
       page: page.pageable?.pageNumber || 1,
-      size: page.pageable?.pageSize || 1
+      size: page.pageable?.pageSize,
+      sortBy: "nom",
+      sortDirection: "asc"
     }
 
 
-    return this._http.get<Page<any>>(`http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?code_postal_fr=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://localhost:9008/api/v1/clubs/address?code_postal_fr=${query}`, { params: params })
   }
 
 
@@ -56,10 +60,12 @@ export class ExtranetService {
 
     const params: {} = !page ? {} : {
       page: page.pageable?.pageNumber,
-      size: page.pageable?.pageSize
+      size: page.pageable?.pageSize,
+      sortBy: "nom",
+      sortDirection: "asc"
     }
 
-    return this._http.get<Page<any>>(`http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?code_insee_departement=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://localhost:9008/api/v1/clubs/address?code_insee_departement=${query}`, { params: params })
   }
 
   getAutoComplete(query?: any): Observable<any> {
@@ -78,32 +84,50 @@ export class ExtranetService {
   }
 
 
-  //http://prod-club.ffkmda.fr:9007/api/v1/clubs/address?code_insee_departement
+  //http://localhost:9008/api/v1/clubs/address?code_insee_departement
 
 
 
 
 
-  public contsructFiltersQuery(filters: any) {
-
-    if (!filters) return null;
-    const { zip, commune, dep } = filters;
-
-    let query = {};
-
-    if (zip) {
-      query = { ...query, code_postal_fr: zip };
-    }
-    if (dep) {
-      query = { ...query, code_insee_departement: dep };
-    }
-    if (commune) {
-      query = { ...query, commune: commune };
-    }
-
-
-    return query;
+  public getOne(code: any): Observable<any> {
+    return this._http.get(`http://localhost:9008/api/v1/structures/${code}`);
   }
+
+  getClubsSearch(filters?: any, page?: PageableSearch): Observable<Page<any>> {
+    const filterQuery: any = this.constructFiltersQuery(filters);
+  
+    //let params = new HttpParams();
+    let filterSplit = filterQuery.split("=")
+  
+    const params: {} = !page ? {} : {
+      [filterSplit[0]]: filterSplit[1],
+      page: page.pageable?.pageNumber,
+      size: page.pageable?.pageSize,
+      sortBy: 'nom',
+      sortDirection: 'asc'
+    }
+  
+    
+    return this._http.get<Page<any>>(`http://localhost:9008/api/v1/clubs/search?`, { params: params });
+  }
+
+    
+  private constructFiltersQuery(filters: any): string {
+    let queryParams = '';
+   
+    if (filters.dep) {
+      queryParams += `code_insee_departement=${filters.dep}&`;
+    }
+    if (filters.search) {
+      queryParams += this.isNumber(filters.search) ? 
+       `code_postal_fr=${filters.search}&` : `commune=${filters.search}&`
+    }
+    
+    return queryParams.slice(0, -1);
+  }
+  
+  isNumber(n: any) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 
 }

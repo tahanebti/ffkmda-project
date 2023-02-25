@@ -5,6 +5,7 @@ import { HeaderComponent } from "./components/header/header.component";
 import { SuggestionsHelperModule } from "./pipes/suggestion-helper.pipe";
 import { PaginatorComponent } from './components/paginator/paginator.component';
 import { ClubCardLoaderComponent } from './components/club-card-loader/club-card-loader.component';
+import { DrawerModule } from "./components/drawer/drawer.module";
 
 
 export const components = [
@@ -17,6 +18,10 @@ export const components = [
   export const pipes = [
    SuggestionsHelperModule
   ]
+
+  export const modules = [
+  
+]
   
 
 @NgModule({
@@ -27,11 +32,12 @@ export const components = [
     ],
     exports: [
       ...components,
-      
+      ...modules
     ],
     imports: [
       CommonModule,
       RouterModule,
+      ...modules,
       ...pipes,
     ]
   })

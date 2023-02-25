@@ -44,4 +44,6 @@ export class PageRequest implements IPageable {
   public static from(page: number, size: number): IPageable {
     return new PageRequest(page, size);
   }
+
+  
 }
