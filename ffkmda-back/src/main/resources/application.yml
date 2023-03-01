@@ -21,6 +21,7 @@ spring:
     password: findaclub_db
      
 
+
 app:
   jwt:
     # Signing key for HS512 algorithm
