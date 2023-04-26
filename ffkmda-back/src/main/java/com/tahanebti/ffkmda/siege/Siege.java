@@ -1,20 +1,13 @@
 package com.tahanebti.ffkmda.siege;
 
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.tahanebti.ffkmda.address.Address;
 import com.tahanebti.ffkmda.base.LongIdEntity;
 import com.tahanebti.ffkmda.club.Club;
-import com.tahanebti.ffkmda.phone.Phone;
-import com.tahanebti.ffkmda.user.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

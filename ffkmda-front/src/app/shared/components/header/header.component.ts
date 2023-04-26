@@ -7,8 +7,7 @@ import { Subject, BehaviorSubject, Observable, combineLatest, map, debounceTime,
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
-
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements OnInit{
 
@@ -38,6 +37,7 @@ export class HeaderComponent implements OnInit{
   suggestionsVisibleSubject = new BehaviorSubject(false);
 
   private suggestionSubject = new BehaviorSubject<any>([]);
+
   readonly suggestionsContent$: Observable<any> = combineLatest([
     this.suggestionSubject.asObservable(),
     this.suggestionsVisibleSubject.asObservable(),
@@ -48,6 +48,7 @@ export class HeaderComponent implements OnInit{
     @Inject(DOCUMENT) private readonly document: Document
   ) {
     this._subscriptionsSubject$ = new Subject<void>();
+
     this.autoCompleteSubject
       .asObservable()
       .pipe(
@@ -57,6 +58,7 @@ export class HeaderComponent implements OnInit{
       )
       .subscribe((searchTerm) => {
         this.autoComplete.emit(searchTerm);
+        console.log(searchTerm)
       });
   }
 
@@ -77,6 +79,7 @@ export class HeaderComponent implements OnInit{
   @HostListener('window:click', ['$event'])
   onClick(event: MouseEvent) {
     const autoComplete = this.document.getElementById('suggestions');
+    console.log(autoComplete)
     if (
       autoComplete &&
       !autoComplete.contains(event.target as Node) &&

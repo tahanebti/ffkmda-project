@@ -76,7 +76,7 @@ $nav-panel-active: darken(#38495f, 2%);
     }
 
     &--selection {
-      display: none;
+      display: block;
       position: absolute;
       top: 0;
       left: 0.25rem;

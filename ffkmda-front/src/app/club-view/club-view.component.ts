@@ -76,6 +76,18 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
   ) {
     this._subscriptionSubject = new Subject<void>();
     
+
+    this.suggestions$ = this.autoCompleteSubject
+    .asObservable()
+    .pipe(
+      switchMap((searchTerm) =>
+        this._extranetService.getAutoComplete(searchTerm).pipe(
+          tap(console.log)
+        )
+      )
+    );
+
+
   }
 
   ngOnInit() {
@@ -117,13 +129,14 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
   }
   
   listenToSearchQuery(page?: PageableSearch) {
+    this.setLoading(true)
     const clubSearch: PageableSearch = {
       pageable: this.cubPage || this.DEFAULT_PAGE
     };
     this._extranetService
     .searchByCommune("paris", clubSearch)
     .pipe(
-      tap((resp: any) => this.setLoading(true)),
+    //  tap((resp: any) => this.setLoading(true)),
       switchMap(
         (query?: any) => (this.sections$ = this.getSearchRequest(query, page))
       ),
@@ -146,27 +159,59 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
    
     return this.route.queryParams
     .pipe(switchMap((p: any) => {
-      if (p.dep) {
-        console.log(p.dep)
-        this.filter = p.dep
-        return this._extranetService.searchByDep(p.dep, clubSearch)
+
+      const dep = p.dep;
+      const search = p.search;
+
+      // if (Object.keys(p).length === 0) {
+      //   console.log('Query parameters are null');
+      //   return this._extranetService
+      //   .search(clubSearch)
+      // }
+
+      if (dep) {
+        console.log(dep);
+        this.filter = dep;
+        return this._extranetService.searchByDep(dep, clubSearch);
       }
 
-      if(p.search){
-        console.log(typeof p.search)
-        console.log(p.search instanceof Number)
-        this.filter = p.search
-        return this.isNumber(p.search) ? this._extranetService.searchByCodePostal(p.search, clubSearch) : 
-        this._extranetService.searchByCommune(p.search, clubSearch)
+      if (search) {
+        console.log(typeof search);
+        this.filter = search;
+        
+        const isFullTextSearch = /\s/.test(query);
+
+        console.log(search)
+
+        if(isFullTextSearch && !this.isNumber(search)){
+          return this._extranetService.searchByFullText(search, clubSearch);
+        } else if (this.isNumber(search)) {
+          console.log("is a number", search)
+          return this._extranetService.searchByCodePostal(search, clubSearch);
+        } else  {
+          return this._extranetService.searchByCommune(search, clubSearch) ;
+        }       
       }
+
       return of([]);
     }))
   }
 
-  isNumber(n: any) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+isNumber(n: any) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
-
+isString(s: any): boolean {
+  return typeof s === "string" || s instanceof String;
+}
   
+isFullTextSearch(query: any) {
+  // Check if the query contains any spaces
+  return query.indexOf(' ') !== -1;
+}
+
+formatQueryParamString(paramString: any) {
+  // Replace special characters and spaces with "-"
+  return paramString.replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
+}
 
   private setLoading(isLoading: boolean): void {
     this.isLoading = isLoading;

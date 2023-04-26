@@ -56,7 +56,7 @@
 					Derniere affiliation:
 				  </div>
 				  <div class="card-body">
-					<p class="card-text">{{club.derniere_affiliation.saison}} - {{club.derniere_affiliation.type}} - {{club.derniere_affiliation.etat}}</p>
+					<p class="card-text">{{club?.derniere_affiliation?.saison}} - {{club?.derniere_affiliation?.type}} - {{club?.derniere_affiliation?.etat}}</p>
 				  </div>
 				</div>
         </div>
@@ -71,32 +71,32 @@
               Club Information
             </div>
             <div class="card-body">
-              <h5 class="card-title">{{club.nom_court}}</h5>
-              <p class="card-text">{{club.siege.adresse_complete}}</p>
+              <h5 class="card-title">{{club?.nom_court}}</h5>
+              <p class="card-text">{{club?.siege.adresse_complete}}</p>
             </div>
             <table class="table table-bordered ">
               <tbody>
                 <tr>
                   <td>Code:</td>
-                  <td>{{club.code}}</td>
+                  <td>{{club?.code}}</td>
                 </tr>
                 <tr>
                   <td>Type:</td>
-                  <td>{{club.type}}</td>
+                  <td>{{club?.type}}</td>
                 </tr>
                 <tr>
                   <td>Region:</td>
-                  <td>{{club.code_region}}</td>
+                  <td>{{club?.code_region}}</td>
                 </tr>
                 <tr>
                   <td>Departement:</td>
-                  <td>{{club.code_departement}}</td>
+                  <td>{{club?.code_departement}}</td>
                 </tr>
                 <tr>
                   <td>Disciplines:</td>
                   <td>
                     <ul class="list-unstyled d-flex flex-wrap">
-                      <li *ngFor="let discipline of club.disciplines" class="px-2 mb-3" style="flex-basis: 33.33%;">{{discipline.libelle}}</li>
+                      <li *ngFor="let discipline of club?.disciplines" class="px-2 mb-3" style="flex-basis: 33.33%;">{{discipline.libelle}}</li>
                     </ul>
                   </td>
                 </tr>

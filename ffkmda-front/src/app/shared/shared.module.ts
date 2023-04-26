@@ -27,12 +27,11 @@ export const components = [
 @NgModule({
     declarations: [
       ...components,
-      
-     
     ],
     exports: [
       ...components,
-      ...modules
+      ...modules,
+      ...pipes
     ],
     imports: [
       CommonModule,

@@ -54,29 +54,29 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 	
 	
 	@Override
-	public List<Club> findClubsBySiegeAddress(String code_postal_fr, String commune, String nom_voie, String type_voie, String code_insee_departement,
+	public List<Club> findClubsBySiegeAddress(String fulltext, String code_postal_fr, String commune, String nom_voie, String type_voie, String code_insee_departement,
 	        String sortBy, String sortDirection
 	        ) {
 	    
 	    Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
-	    Specification<Club> spec = adSpecial(code_postal_fr, commune, nom_voie, type_voie, code_insee_departement);
+	    Specification<Club> spec = adSpecial(fulltext, code_postal_fr, commune, nom_voie, type_voie, code_insee_departement);
 	    return clubRepository.findAll(spec, sort);
 	}
 	
 
 	@Override
-	public Page<Club> searchByAddress(String commune, String code_postal_fr, String nom_voie, String type_voie,
+	public Page<Club> searchByAddress(String fulltext, String commune, String code_postal_fr, String nom_voie, String type_voie,
 			String code_insee_departement, String sortBy, String sortDirection, Pageable page) {
 		
 			
 	
-		return clubRepository.findAll(adSpecial(code_postal_fr, commune, nom_voie, type_voie, code_insee_departement), page);
+		return clubRepository.findAll(adSpecial(fulltext, code_postal_fr, commune, nom_voie, type_voie, code_insee_departement), page);
 	}
 	
 	
 	
 	
-	public Page<Club> searchClubs(
+	public List<Club> searchClubs(
 	        String city,
 	        String commune,
 	        String code_postal_fr,
@@ -109,14 +109,14 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 	    }
 	    Specification<Club> spec = new ClubSpecifications(criteria);
 	    Pageable paging = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
-	    return clubRepository.findAll(spec, paging);
+	    return clubRepository.findAll(spec);
 	}
 
 
 	
 	//	// firstName=:eq:taha&address.state=:cn:kairouan
 
-	public static Specification<Club> adSpecial(String commune, String code_postal_fr, String nom_voie, String type_voie, String code_insee_departement) {
+	public static Specification<Club> adSpecial(String fulltext, String commune, String code_postal_fr, String nom_voie, String type_voie, String code_insee_departement) {
 		
 	    return (root, query, criteriaBuilder) -> {
 	       // ListJoin<Club, Siege> values = root.joinList("siege");
@@ -124,6 +124,14 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 	    	  
 	    	List<Predicate> predicates = new ArrayList<>();
 	    	
+			if (fulltext != null && fulltext instanceof String ) {
+				return criteriaBuilder.or(
+					criteriaBuilder.like(criteriaBuilder.lower(root.get("nom")), "%" + fulltext.toLowerCase() + "%"),
+					criteriaBuilder.like(criteriaBuilder.lower(root.get("nom_court")), "%" + fulltext.toLowerCase() + "%")
+				);
+			}
+			
+
 	    	 if(commune != null && commune instanceof String){
                  return criteriaBuilder.like(criteriaBuilder.lower(root.join("siege", JoinType.LEFT).get("commune")), "%" + commune + "%");
              }
@@ -141,8 +149,15 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
              }
              
 	    	 if(code_insee_departement != null && code_insee_departement instanceof String){
-                 return criteriaBuilder.like(criteriaBuilder.lower(root.join("siege", JoinType.LEFT).get("code_insee_departement")), code_insee_departement + "%");
-             }
+
+			//	String fulltextLower = code_insee_departement.toLowerCase();
+				Expression<String> nomExpr = root.join("siege", JoinType.LEFT).get("code_insee_departement");
+				Expression<String> nomCourtExpr = root.join("siege", JoinType.LEFT).get("code_postal_fr");
+				Predicate nomLike = criteriaBuilder.like(criteriaBuilder.lower(nomCourtExpr),  code_insee_departement + "%");
+			
+            
+				return nomLike;
+			}
 	    	 
              
 	    	 

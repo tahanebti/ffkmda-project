@@ -29,6 +29,17 @@ export class ExtranetService {
   constructor(private _http: HttpClient) { }
 
 
+  search(page?: PageableSearch): Observable<Page<any>> {
+
+    const params: {} = !page ? {} : {
+      _offset: page.pageable?.pageNumber,
+      _limit: page.pageable?.pageSize,
+      sortBy: "nom",
+      sortDirection: "asc"
+    }
+    //prod-club.ffkmda.fr
+    return this._http.get<Page<any>>(`http://pprod-club.ffkmda.fr:9008/api/v1/clubs/search`, { params: params })
+  }
 
   searchByCommune(query?: any, page?: PageableSearch): Observable<Page<any>> {
 
@@ -68,11 +79,24 @@ export class ExtranetService {
     return this._http.get<Page<any>>(`http://pprod-club.ffkmda.fr:9008/api/v1/clubs/address?code_insee_departement=${query}`, { params: params })
   }
 
+
+  searchByFullText(query: any, page?: PageableSearch): Observable<any> {
+
+    const params: {} = !page ? {} : {
+      page: page.pageable?.pageNumber,
+      size: page.pageable?.pageSize,
+      sortBy: "nom",
+      sortDirection: "asc"
+    }
+
+    return this._http.get<Page<any>>(`http://pprod-club.ffkmda.fr:9008/api/v1/clubs/address?fulltext=${query}`, { params: params })
+  }
+
   getAutoComplete(query?: any): Observable<any> {
     return forkJoin([
       this.searchByCodePostal(query),
       this.searchByCommune(query),
-      this.searchByDep(query),
+      this.searchByFullText(query),
     ]).pipe(
       map(([clubs, commune, dep]) => ({
         clubs,
@@ -84,12 +108,14 @@ export class ExtranetService {
   }
 
 
+
+
   //http://prod-club.ffkmda.fr:9008/api/v1/clubs/address?code_insee_departement
 
 
 
-
-
+//don't forget to replace endpoint for production
+//http://pprod-club.ffkmda.fr
   public getOne(code: any): Observable<any> {
     return this._http.get(`http://pprod-club.ffkmda.fr:9008/api/v1/structures/${code}`);
   }

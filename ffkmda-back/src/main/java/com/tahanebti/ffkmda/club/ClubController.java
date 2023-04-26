@@ -5,20 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,9 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tahanebti.ffkmda.base.PageRequestBuilder;
-import com.tahanebti.ffkmda.role.Role;
-import com.tahanebti.ffkmda.role.RoleMapper;
-import com.tahanebti.ffkmda.role.RoleService;
 import com.tahanebti.ffkmda.specification.SpecificationsBuilder;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -119,6 +109,7 @@ public class ClubController {
 	
 	@GetMapping("/address")
 	public Map<String, Object> findClubsBySiegeAddressCommune(
+		    @Parameter(description = "return list of clubs by nom full text {} --- Example : ADRENALINE FIGHT TEAM ....") @RequestParam(required = false) String fulltext,
 			@Parameter(description = "return list of clubs by commune {} --- Example : bagnolet ....") @RequestParam(required = false) String commune, 
 			@Parameter(description = "return list of clubs by zip {} --- Example : 35000 ....") @RequestParam(required = false) String code_postal_fr,
 			@Parameter(description = "return list of clubs by street name {} --- Example : Malmaison ....") @RequestParam(required = false) String nom_voie,
@@ -129,7 +120,8 @@ public class ClubController {
             @RequestParam(defaultValue = "nom") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection
 			) {
-		List<Club> clubs = clubService.findClubsBySiegeAddress(commune, code_postal_fr, nom_voie, type_voie, code_insee_departement, sortBy, sortDirection);
+		
+		List<Club> clubs = clubService.findClubsBySiegeAddress(fulltext, commune, code_postal_fr, nom_voie, type_voie, code_insee_departement, sortBy, sortDirection);
 		
 	   
 	    Pageable paging = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
@@ -167,11 +159,11 @@ public class ClubController {
 	        @RequestParam(required = false) String code_insee_departement,
 	        @RequestParam(defaultValue = "0") int page,
 	        @RequestParam(defaultValue = "10") int size,
-	        @RequestParam(defaultValue = "name") String sortBy,
+	        @RequestParam(defaultValue = "nom") String sortBy,
 	        @RequestParam(defaultValue = "asc") String sortDirection
 	) {
 	    
-	        Page<Club> clubs = clubService.searchClubs(
+		List<Club> clubs = clubService.searchClubs(
 	                city,
 	                commune,
 	                code_postal_fr,
@@ -185,20 +177,27 @@ public class ClubController {
 	        );
 
 
-	    
-	        Map<String, Object> response = new HashMap<>();
-	        response.put("data", clubs.getContent().stream().map(clubMapper::toResponse).collect(Collectors.toList()));            
-	        response.put("offset", clubs.getPageable().getOffset());
-	        response.put("current", clubs.getPageable());
-	        response.put("next", clubs.getPageable().next());
-	        response.put("previous", clubs.getPageable().previousOrFirst());
-	        response.put("totalElements", clubs.getTotalElements());
-	        response.put("last", clubs.isLast());
-	        response.put("first", clubs.isFirst());
-	        response.put("numberOfElements", clubs.getNumberOfElements());
-	        response.put("empty", clubs.isEmpty());
-	     
-	        return response;
+		Pageable paging = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+
+		int pageSize = paging.getPageSize();
+		long pageOffset = paging.getOffset();
+		long total = pageOffset + clubs.size() + (clubs.size() == pageSize ? pageSize : 0);
+		
+			
+		final Page<Club> pageEntity = new PageImpl<>(clubs, paging, total);
+	
+		Map<String, Object> response = new HashMap<>();
+		response.put("data", pageEntity.getContent().stream().map(clubMapper::toResponse).collect(Collectors.toList()));			
+		response.put("offset", pageEntity.getPageable().getOffset());
+		response.put("current", pageEntity.getPageable());
+		response.put("next", pageEntity.getPageable().next());
+		response.put("previous", pageEntity.getPageable().previousOrFirst());
+		response.put("totalElements", pageEntity.getTotalElements());
+		response.put("last", pageEntity.isLast());
+		response.put("first", pageEntity.isFirst());
+		response.put("numberOfElements", pageEntity.getNumberOfElements());
+		response.put("empty", pageEntity.isEmpty());
+		return response;
 	   
 	
 	}
