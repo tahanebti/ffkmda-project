@@ -36,11 +36,14 @@ public class Club extends LongIdEntity {
 	private String logo;
 	private String logo_url;
 	private String code_region;
+	private String getDerniere_affiliation;
 	
 	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch=FetchType.EAGER)
 	@JoinColumn(name = "siege_id", referencedColumnName = "id")
 	@ToString.Exclude
 	private Siege siege;
+
+
 	
 
 	

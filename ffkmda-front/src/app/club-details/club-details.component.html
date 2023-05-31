@@ -74,7 +74,7 @@
               <h5 class="card-title">{{club?.nom_court}}</h5>
               <p class="card-text">{{club?.siege.adresse_complete}}</p>
             </div>
-            <table class="table table-bordered ">
+            <table class="disciplines-table">
               <tbody>
                 <tr>
                   <td>Code:</td>
@@ -95,17 +95,20 @@
                 <tr>
                   <td>Disciplines:</td>
                   <td>
-                    <ul class="list-unstyled d-flex flex-wrap">
-                      <li *ngFor="let discipline of club?.disciplines" class="px-2 mb-3" style="flex-basis: 33.33%;">{{discipline.libelle}}</li>
+                    <ul class="disciplines-list">
+                      <li *ngFor="let discipline of club?.disciplines" >{{discipline.libelle}}</li>
                     </ul>
                   </td>
                 </tr>
                 <tr>
                   <td>Instances:</td>
                   <td>
-                    <ul>
-                      <li *ngFor="let instance of club.instances">{{instance.fonction}}: {{instance.personne.nom}} {{instance.personne.prenom}}</li>
-                    </ul>
+                      <ul class="instances-list">
+						  <li *ngFor="let instance of club.instances">
+							<span class="instance-function">{{instance.fonction}}</span>:
+							<span class="instance-person">{{instance.personne.nom}} {{instance.personne.prenom}}</span>
+						  </li>
+					  </ul>
                   </td>
                 </tr>
         

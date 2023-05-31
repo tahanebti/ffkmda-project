@@ -128,26 +128,22 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
     this.listenToSearchQuery()
   }
   
-  listenToSearchQuery(page?: PageableSearch) {
+  listenToSearchQuery(query?: any , page?: PageableSearch) {
     this.setLoading(true)
     const clubSearch: PageableSearch = {
       pageable: this.cubPage || this.DEFAULT_PAGE
     };
-    this._extranetService
-    .searchByCommune("paris", clubSearch)
+    
+	this.getSearchRequest(query, page)
     .pipe(
-    //  tap((resp: any) => this.setLoading(true)),
-      switchMap(
-        (query?: any) => (this.sections$ = this.getSearchRequest(query, page))
-      ),
       takeUntil(this._subscriptionSubject)
     )
-    .subscribe(resp => {
-      this.clubs = resp
-      console.log(resp)
+    .subscribe((resp) => {
+      this.clubs = resp;
+      console.log(resp);
       this.setLoading(false);
       this.cdr.detectChanges();
-    })
+    });
   }
 
 
