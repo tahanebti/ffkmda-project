@@ -21,10 +21,10 @@ spring:
     password: findaclub_db 
   batch:
     jdbc:
-      initialize-schema: never
+      initialize-schema: ALWAYS
       
       #spring.batch.initialize-schema: NEVER
-      spring.batch.jdbc.initialize-schema : ALWAYS
+      #spring.batch.jdbc.initialize-schema : ALWAYS
     #findaclub_db
      
 
