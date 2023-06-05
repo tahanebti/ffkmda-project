@@ -168,7 +168,7 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
       if (dep) {
         console.log(dep);
         this.filter = dep;
-        return this._extranetService.searchByDep(dep, clubSearch);
+        return this._extranetService.searchByDep(this.addLeadingZeroIfNeeded(dep), clubSearch);
       }
 
       if (search) {
@@ -204,6 +204,14 @@ isFullTextSearch(query: any) {
   return query.indexOf(' ') !== -1;
 }
 
+addLeadingZeroIfNeeded(str: any) {
+  if (str.length <= 2) {
+    return "0" + str;
+  } else {
+    return str;
+  }
+}
+
 formatQueryParamString(paramString: any) {
   // Replace special characters and spaces with "-"
   return paramString.replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
@@ -226,13 +234,13 @@ formatQueryParamString(paramString: any) {
         borderOpacity: 0.75,
         borderWidth: 1,
         color: '#f4f3f0',
-        enableZoom: true,
+        enableZoom: false, // Disable zooming to restrict the view to Île-de-France
         hoverColor: '#c9dfaf',
         hoverOpacity: null,
         normalizeFunction: 'linear',
         scaleColors: ['#b6d6ff', '#005ace'],
         selectedColor: '#c9dfaf',
-        selectedRegions: null,
+        selectedRegions: ['11'], // Change the number to the region code you want to highlight (Île-de-France is 11)
         showTooltip: true,
    // Click by region
     onRegionClick: function(element:any, code:any, region:any) {

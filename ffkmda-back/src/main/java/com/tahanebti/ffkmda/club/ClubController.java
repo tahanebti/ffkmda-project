@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -123,30 +123,24 @@ public class ClubController {
 	}
 	
 	@GetMapping("/address")
+	@Cacheable(value = "clubsByAddress", keyGenerator = "customKeyGenerator")
 	public Map<String, Object> findClubsBySiegeAddressCommune(
 		    @Parameter(description = "return list of clubs by nom full text {} --- Example : ADRENALINE FIGHT TEAM ....") @RequestParam(required = false) String fulltext,
 			@Parameter(description = "return list of clubs by commune {} --- Example : bagnolet ....") @RequestParam(required = false) String commune, 
 			@Parameter(description = "return list of clubs by zip {} --- Example : 35000 ....") @RequestParam(required = false) String code_postal_fr,
 			@Parameter(description = "return list of clubs by street name {} --- Example : Malmaison ....") @RequestParam(required = false) String nom_voie,
 			@Parameter(description = "return list of clubs by street type {} --- Example : Rue ....") @RequestParam(required = false) String type_voie,
-			@Parameter(description = "return list of clubs by code deparement {} --- Example : 75 ....") @RequestParam(required = false) String code_insee_departement,
+			@Parameter(description = "return list of clubs by code deparement {} --- Example : 2b ....") @RequestParam(required = false) String code_insee_departement,
+			@Parameter(description = "return list of clubs by code deparement {} --- Example : 02b ....") @RequestParam(required = false) String code_departement,
 			@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nom") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection
 			) {
 		
-	    String cacheName = "clubsByAddressCache";
-        String cacheKey = generateCacheKey(fulltext, commune, code_postal_fr, nom_voie, type_voie, code_insee_departement, sortBy, sortDirection);
-
-        Cache cache = cacheManager.getCache(cacheName);
-        if (cache != null && cache.get(cacheKey) != null) {
-            // Cache hit, return the cached result
-            return cache.get(cacheKey, Map.class);
-        }
-        
+	
 	    
-		List<Club> clubs = clubService.findClubsBySiegeAddress(fulltext, commune, code_postal_fr, nom_voie, type_voie, code_insee_departement, sortBy, sortDirection);
+		List<Club> clubs = clubService.findClubsBySiegeAddress(fulltext, commune, code_postal_fr, nom_voie, type_voie, code_insee_departement, code_departement, sortBy, sortDirection);
         clubs.removeIf(club -> {
             try {
                 return !filterByCurrentYearAffiliation(club);
@@ -181,12 +175,14 @@ public class ClubController {
 		response.put("empty", pageEntity.isEmpty());
 		
 		  // Cache the result
-        cache.put(cacheKey, response);
+    
         
 		return response;
 	}
 	
-	private String generateCacheKey(String fulltext, String commune, String code_postal_fr, String nom_voie, String type_voie, String code_insee_departement, String sortBy, String sortDirection) {
+	private String generateCacheKey(String fulltext, String commune, 
+	        String code_postal_fr, String nom_voie, 
+	        String type_voie, String code_insee_departement, String code_departement, String sortBy, String sortDirection) {
 	    StringBuilder keyBuilder = new StringBuilder();
 	    keyBuilder.append("findClubsBySiegeAddressCommune:");
 	    
@@ -213,6 +209,10 @@ public class ClubController {
 	    if (code_insee_departement != null) {
 	        keyBuilder.append("code_insee_departement=").append(code_insee_departement).append(":");
 	    }
+	    
+	    if (code_insee_departement != null) {
+            keyBuilder.append("code_departement=").append(code_departement).append(":");
+        }
 	    
 	    keyBuilder.append("sortBy=").append(sortBy).append(":");
 	    keyBuilder.append("sortDirection=").append(sortDirection);
@@ -242,10 +242,11 @@ public class ClubController {
         Map<String, Object> jsonMap = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
 
         Object saison = findSaison(jsonMap);
-        
+        String nom = clubName(jsonMap);
         if (saison != null) {
- 
-            System.out.println("Saison: " + saison.toString());
+            
+
+            System.out.println("Club : " + nom + "Saison: " + saison.toString());
             return isCurrentYearAffiliation(saison);
         
         }
@@ -262,12 +263,29 @@ public class ClubController {
 	       return affiliationYear == currentYear;
 	   }
 	   
+	   
+	   
+	   
+	   private String clubName(Map<String, Object> jsonMap) {
+	       for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
+	           String key = entry.getKey();
+	           Object value = entry.getValue();
+
+	           if (key.equals("nom")) {
+	               if (value != null) {
+	                   return value.toString();
+	               }
+	           }
+	       }
+	       return null;
+	   }
+
 	// Recursive method to find the "saison" within the JSON object
 	   private Object findSaison(Map<String, Object> jsonMap) {
 	       for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
 	           String key = entry.getKey();
 	           Object value = entry.getValue();
-
+	           
 	           if (key.equals("derniere_affiliation")) {
 	               // Check if the value is a nested map with "saison" field
 	               if (value instanceof Map) {

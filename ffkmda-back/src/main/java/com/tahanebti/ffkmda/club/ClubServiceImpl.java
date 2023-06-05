@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 
 import org.springframework.data.domain.Page;
@@ -19,10 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.tahanebti.ffkmda.address.Address;
 import com.tahanebti.ffkmda.base.BaseRepository;
 import com.tahanebti.ffkmda.base.BaseServiceImpl;
-import com.tahanebti.ffkmda.base.PageRequestBuilder;
 import com.tahanebti.ffkmda.exception.DataNotFoundException;
 import com.tahanebti.ffkmda.siege.Siege;
 import com.tahanebti.ffkmda.specification.SpecificationsBuilder;
@@ -55,22 +50,22 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 	
 	@Override
 	public List<Club> findClubsBySiegeAddress(String fulltext, String code_postal_fr, String commune, String nom_voie, String type_voie, String code_insee_departement,
-	        String sortBy, String sortDirection
+	        String code_departement, String sortBy, String sortDirection
 	        ) {
 	    
 	    Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
-	    Specification<Club> spec = adSpecial(fulltext, code_postal_fr, commune, nom_voie, type_voie, code_insee_departement);
+	    Specification<Club> spec = adSpecial(fulltext, code_postal_fr, commune, nom_voie, type_voie, code_insee_departement,code_departement);
 	    return clubRepository.findAll(spec, sort);
 	}
 	
 
 	@Override
 	public Page<Club> searchByAddress(String fulltext, String commune, String code_postal_fr, String nom_voie, String type_voie,
-			String code_insee_departement, String sortBy, String sortDirection, Pageable page) {
+			String code_insee_departement, String code_departement, String sortBy, String sortDirection, Pageable page) {
 		
 			
 	
-		return clubRepository.findAll(adSpecial(fulltext, code_postal_fr, commune, nom_voie, type_voie, code_insee_departement), page);
+		return clubRepository.findAll(adSpecial(fulltext, code_postal_fr, commune, nom_voie, type_voie, code_insee_departement, code_departement), page);
 	}
 	
 	
@@ -116,7 +111,8 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 	
 	//	// firstName=:eq:taha&address.state=:cn:kairouan
 
-	public static Specification<Club> adSpecial(String fulltext, String commune, String code_postal_fr, String nom_voie, String type_voie, String code_insee_departement) {
+	public static Specification<Club> adSpecial(String fulltext, String commune, String code_postal_fr, 
+	        String nom_voie, String type_voie, String code_insee_departement, String code_departement) {
 		
 	    return (root, query, criteriaBuilder) -> {
 	       // ListJoin<Club, Siege> values = root.joinList("siege");
@@ -159,7 +155,9 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 				return nomLike;
 			}
 	    	 
-             
+	    	 if (code_departement != null && code_departement instanceof String) {
+	             return criteriaBuilder.like(criteriaBuilder.lower(root.get("code_departement")), "%" + code_departement.toLowerCase() + "%");
+	         }
 	    	 
 	    	 return criteriaBuilder.like(criteriaBuilder.lower(root.get("commune")), "%" + commune + "%");
 	            
@@ -194,6 +192,8 @@ public class ClubServiceImpl extends BaseServiceImpl<Club, Long> implements Club
 		    	 if(fax != null && fax instanceof String){
 	                 return criteriaBuilder.like(criteriaBuilder.lower(root.join("siege", JoinType.LEFT).get("nom_voie")), "%" + fax + "%");
 	             }
+		    	 
+		    	 
 		    	 
 		    	 return criteriaBuilder.like(criteriaBuilder.lower(root.get("tel")), "%" + tel + "%");
 		           

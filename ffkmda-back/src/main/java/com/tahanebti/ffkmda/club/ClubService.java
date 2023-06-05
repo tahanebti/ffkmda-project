@@ -16,13 +16,13 @@ public interface ClubService extends BaseService<Club, Long>{
 	public List<Club> validateAndGetByType(String type);
 
 	public List<Club> findClubsBySiegeAddress(String fulltext, String commune, String code_postal_fr, String nom_voie, String type_voie, String code_insee_departement,
-	        String sortBy, String sortDirection
+	        String code_departement, String sortBy, String sortDirection
 	        );
 
 	public List<Club> findClubsBySiegePhone(String tel, String mobile, String fax);
 
 	public Page<Club> searchByAddress(String fulltext, String commune, String code_postal_fr, String nom_voie, String type_voie,
-			String code_insee_departement,String sortBy, String sortDirection, Pageable page);
+			String code_insee_departement, String code_departement, String sortBy, String sortDirection, Pageable page);
 
 
     public List<Club> searchClubs(

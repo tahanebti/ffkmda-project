@@ -41,5 +41,6 @@ public abstract class LongIdEntity extends BaseEntity<Long> {
 	 @UpdateTimestamp
 	 private Date updatedAt;
 
-		 
+	 @Column
+	 private String commune; // Add the commune attribute here	 
 }

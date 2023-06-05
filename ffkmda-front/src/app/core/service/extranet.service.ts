@@ -67,7 +67,7 @@ export class ExtranetService {
   }
 
 
-  searchByDep(query: any, page?: PageableSearch): Observable<any> {
+  searchByDep(dep: any, page?: PageableSearch): Observable<any> {
 
     const params: {} = !page ? {} : {
       page: page.pageable?.pageNumber,
@@ -76,7 +76,7 @@ export class ExtranetService {
       sortDirection: "asc"
     }
 
-    return this._http.get<Page<any>>(`http://pprod-club.ffkmda.fr:9008/api/v1/clubs/address?code_insee_departement=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://pprod-club.ffkmda.fr:9008/api/v1/clubs/address?code_departement=${dep}`, { params: params })
   }
 
 

@@ -105,6 +105,7 @@ public class RESTClubReader implements ItemReader<Club> {
 	        	 Map<String,Object> ind = (Map<String,Object> ) item;
 	        	 Map<String,Object>  listSiege = (Map<String,Object> )ind.get("siege");
 
+	        	 
 	        		 Club club = Club.builder()
 	        				 	.code(ind.get("code") == null ? null : ind.get("code").toString())
 	 		        	 		.etat(ind.get("etat") == null ? null : ind.get("etat").toString())
@@ -112,6 +113,7 @@ public class RESTClubReader implements ItemReader<Club> {
 	 		        	 		.nom_court(ind.get("nom_court") == null ? null : ind.get("nom_court").toString())
 	 		        	 		.type(ind.get("type") == null ? null : ind.get("type").toString())
 	 		        	 		.code_region(ind.get("code_region") == null ? null : ind.get("code_region").toString())
+	 		        	 		.code_departement(ind.get("code_departement") == null ? null : ind.get("code_departement").toString())
 	 		        	 		.siege(Siege.builder()
 	 		        	 					.nom_voie(listSiege.get("nom_voie") == null ? null : listSiege.get("nom_voie").toString())
 		 			        	 			.num_voie(listSiege.get("num_voie") == null ? null : listSiege.get("num_voie").toString())

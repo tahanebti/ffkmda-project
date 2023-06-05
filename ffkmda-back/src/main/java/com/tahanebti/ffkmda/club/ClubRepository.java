@@ -32,6 +32,8 @@ List<Club> findClubsBySiegeAddress(@Param("zip") String zip,
 
 
 	
-	
+    @Query("SELECT c FROM Club c INNER JOIN FETCH c.siege s WHERE c.type = :type AND c.code_departement = :codeDepartement AND s.code_insee_departement = :codeInseeDepartement")
+    List<Club> findClubsByTypeAndCodeDepartement(@Param("type") String type, @Param("codeDepartement") String codeDepartement, @Param("codeInseeDepartement") String codeInseeDepartement);
+
 
 }

@@ -19,7 +19,7 @@ public class ClubResponse {
 	private String logo;
 	private String logo_url;
 	private String code_region;
-	
+	private String code_departement;
 	private SiegeResponse siege;
 	
 //	private Date createdAt;
