@@ -20,6 +20,7 @@ public class FfkmdaApplication implements CommandLineRunner {
     @Autowired
     private Environment environment;
     
+    
     @Override
     public void run(String... args) throws Exception {
         log.info("\n----Begin logging FfkmdaApplication----");
