@@ -168,13 +168,14 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
       if (dep) {
         console.log(dep);
         this.filter = dep;
+		 this.filter = dep.toUpperCase();
         return this._extranetService.searchByDep(this.addLeadingZeroIfNeeded(dep), clubSearch);
       }
 
       if (search) {
         console.log(typeof search);
         this.filter = search;
-        
+        console.log(this.filter)
         const isFullTextSearch = /\s/.test(query);
 
         console.log(search)
