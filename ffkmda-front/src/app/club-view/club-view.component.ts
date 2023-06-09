@@ -29,6 +29,7 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
   clubs: any
   targetCode: any;
   filter: any
+  depFilter: any
   p: any = 1 
   total: any;
   cubPage: any;
@@ -168,7 +169,7 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
       if (dep) {
         console.log(dep);
         this.filter = dep;
-		 this.filter = dep.toUpperCase();
+		    this.depFilter = dep.toUpperCase();
         return this._extranetService.searchByDep(this.addLeadingZeroIfNeeded(dep), clubSearch);
       }
 
@@ -176,22 +177,47 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
         console.log(typeof search);
         this.filter = search;
         console.log(this.filter)
-        const isFullTextSearch = /\s/.test(query);
-
-        console.log(search)
-
-        if(isFullTextSearch && !this.isNumber(search)){
+        const isFullTextSearch = this.isFullTextSearch(search);
+      
+        console.log("isFullTextSearch", isFullTextSearch)
+      
+        if (isFullTextSearch && !this.isNumber(search)) {
           return this._extranetService.searchByFullText(search, clubSearch);
         } else if (this.isNumber(search)) {
           console.log("is a number", search)
           return this._extranetService.searchByCodePostal(search, clubSearch);
-        } else  {
-          return this._extranetService.searchByCommune(search, clubSearch) ;
-        }       
+        } else {
+          return this._extranetService.searchByCommune(search, clubSearch);
+        }
       }
+      
+   // Apply additional filter if 'filter' property is set
+   if (this.filter) {
+    return this._extranetService.search(clubSearch).pipe(
+      map((data: any) =>
+      this.compareDepartments(data.siege?.code_insee_departement, data.code_departement)
+            
+      )
+    );
+  }
 
       return of([]);
     }))
+  }
+
+  getCodeInseeDepartement(club: any): string | null {
+    if (club?.siege?.code_insee_departement) {
+      return club.siege.code_insee_departement.toString();
+    }
+    return null;
+  }
+
+  compareDepartments(codeInseeDepartement: string, codeDepartement: string): boolean {
+    if (codeInseeDepartement && codeDepartement) {
+      console.log("compare", codeInseeDepartement === this.deleteLeadingZeroIfNeeded(codeDepartement))
+      return codeInseeDepartement === this.deleteLeadingZeroIfNeeded(codeDepartement);
+    }
+    return false;
   }
 
 isNumber(n: any) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
@@ -201,13 +227,23 @@ isString(s: any): boolean {
 }
   
 isFullTextSearch(query: any) {
-  // Check if the query contains any spaces
-  return query.indexOf(' ') !== -1;
+  // Check if the query contains any spaces using a regular expression
+  const spaceRegex = /\s/;
+  return spaceRegex.test(query);
 }
+
 
 addLeadingZeroIfNeeded(str: any) {
   if (str.length <= 2) {
     return "0" + str;
+  } else {
+    return str;
+  }
+}
+
+deleteLeadingZeroIfNeeded(str: any) {
+  if (typeof str === 'string' && str.length > 0 && str.charAt(0) === '0') {
+    return str.substring(1);
   } else {
     return str;
   }

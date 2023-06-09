@@ -34,5 +34,5 @@ export class FilterQuery{
 }
 
 
-export const DEFAULT_SEARCH_PAGE: IPageable =   PageRequest.from(1, 5);
+export const DEFAULT_SEARCH_PAGE: IPageable =   PageRequest.from(0, 5);
 export const NULL_SEARCH_PAGE: IPageable =   PageRequest.from(1, 1);
