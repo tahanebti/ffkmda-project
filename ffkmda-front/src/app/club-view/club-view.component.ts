@@ -195,12 +195,10 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
    if (this.filter) {
     return this._extranetService.search(clubSearch).pipe(
       map((data: any) =>
-      this.compareDepartments(data.siege?.code_insee_departement, data.code_departement)
-            
-      )
+      this.compareDepartments(data.siege?.code_insee_departement, data.code_departement, data.siege?.code_postal_fr))
+
     );
   }
-
       return of([]);
     }))
   }
@@ -212,13 +210,17 @@ export class ClubViewComponent implements OnInit, AfterViewInit, OnDestroy  {
     return null;
   }
 
-  compareDepartments(codeInseeDepartement: string, codeDepartement: string): boolean {
+  compareDepartments(codeInseeDepartement: string | null, codeDepartement: string, codePostal: string): boolean {
     if (codeInseeDepartement && codeDepartement) {
-      console.log("compare", codeInseeDepartement === this.deleteLeadingZeroIfNeeded(codeDepartement))
+      console.log("compare isnee_dep  ", codeInseeDepartement === this.deleteLeadingZeroIfNeeded(codeDepartement))
       return codeInseeDepartement === this.deleteLeadingZeroIfNeeded(codeDepartement);
+    } else if (codeInseeDepartement == null && codePostal && codeDepartement) {
+      console.log("compare postal_fr  ", codeInseeDepartement === codePostal.substring(0, 3))
+      return codeDepartement === codePostal.substring(0, 3);
     }
     return false;
   }
+
 
 isNumber(n: any) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
