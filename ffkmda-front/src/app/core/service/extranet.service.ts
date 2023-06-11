@@ -50,7 +50,7 @@ export class ExtranetService {
       sortDirection: "asc"
     }
     //prod-club.ffkmda.fr
-    return this._http.get<Page<any>>(`http://pprod-club.ffkmda.fr:9008/api/v1/clubs/address?commune=${query}`, { params: params })
+    return this._http.get<Page<any>>(`http://pprod-club.ffkmda.fr:9008/api/v1/clubs/address?fulltext=${query}`, { params: params })
   }
 
   searchByCodePostal(query?: any, page?: PageableSearch): Observable<Page<any>> {
